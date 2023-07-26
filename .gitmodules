@@ -1,0 +1,3 @@
+[submodule "renderer_test/external/math"]
+	path = renderer_test/external/math
+	url = https://github.com/khalilhenoud/math.git
