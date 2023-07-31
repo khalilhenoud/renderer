@@ -18,6 +18,8 @@ renderer_initialize()
 {
   // basic renderer setup.
   float vec[4] = { 1.f, 1.f, 1.f, 1.f };
+  float col[4] = { 0.7f, 0.7f, 0.7f, 1.f };
+  float dir[4] = { 1.f, 1.f, 1.f, 0.f };
 
   glShadeModel(GL_SMOOTH);
   glEnable(GL_DEPTH_TEST);
@@ -32,6 +34,10 @@ renderer_initialize()
   glEnable(GL_LIGHTING);
   glEnable(GL_NORMALIZE);
   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, vec);
+
+  glEnable(GL_LIGHT0);
+  glLightfv(GL_LIGHT0, GL_DIFFUSE, col);
+  glLightfv(GL_LIGHT0, GL_POSITION, dir);
 
   // setting the texture blending mode.
   glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
