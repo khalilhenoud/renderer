@@ -103,7 +103,7 @@ upload_to_gpu(
   const uint8_t* buffer,
   uint32_t width,
   uint32_t height,
-  image_format_t format);
+  renderer_image_format_t format);
 
 RENDERER_API
 uint32_t

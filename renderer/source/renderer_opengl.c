@@ -374,7 +374,7 @@ draw_meshes(
 
 static
 uint32_t 
-get_component_number(image_format_t format)
+get_component_number(renderer_image_format_t format)
 {
   switch (format)
   {
@@ -401,7 +401,7 @@ get_component_number(image_format_t format)
 
 static
 int32_t 
-is_component_power_2(image_format_t format)
+is_component_power_2(renderer_image_format_t format)
 {
   uint32_t components = get_component_number(format);
   return (components & (components - 1)) == 0;
@@ -409,7 +409,7 @@ is_component_power_2(image_format_t format)
 
 static
 GLenum
-get_ogl_format(image_format_t format)
+get_ogl_format(renderer_image_format_t format)
 {
   switch (format)
   {
@@ -448,7 +448,7 @@ upload_to_gpu(
   const uint8_t* buffer,
   uint32_t width,
   uint32_t height,
-  image_format_t format)
+  renderer_image_format_t format)
 {
   uint32_t n = 0;
   GLenum ogl_format = get_ogl_format(format);
