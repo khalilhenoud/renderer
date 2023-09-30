@@ -59,7 +59,7 @@ enum {
 } viewport_t;
 
 typedef 
-struct {
+struct pipeline_t {
   stack_mode_t mode;
   matrix4f modelview_stack[MODELVIEW_STACK];
   int32_t modelview_index;
