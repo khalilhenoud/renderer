@@ -59,6 +59,18 @@ renderer_initialize()
 }
 
 void
+disable_depth_test()
+{
+  glDisable(GL_DEPTH_TEST);
+}
+
+void
+enable_depth_test()
+{
+  glEnable(GL_DEPTH_TEST);
+}
+
+void
 renderer_cleanup()
 {
   glBindTexture(GL_TEXTURE_2D, 0);
@@ -220,6 +232,7 @@ draw_unit_quads(
   const unit_quad_t* uvs,
   uint32_t uvs_count,
   int32_t texture_id,
+  color_t tint,
   pipeline_t* pipeline)
 {
   set_pipeline_transform(pipeline);
@@ -230,7 +243,7 @@ draw_unit_quads(
   }
 
   glDisable(GL_LIGHTING);
-  glColor4f(1.f, 1.f, 1.f, 1.f);
+  glColor4f(tint.data[0], tint.data[1], tint.data[2], tint.data[3]);
   glDisable(GL_CULL_FACE);
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
