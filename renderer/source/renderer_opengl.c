@@ -379,6 +379,7 @@ draw_meshes(
       glDrawElements(GL_TRIANGLES, (GLsizei)mesh[i].indices_count, GL_UNSIGNED_INT, &mesh[i].indices[0]);
 
       glDisable(GL_TEXTURE_2D);
+      glDisable(GL_BLEND);
     }
   }
 
