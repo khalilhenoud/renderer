@@ -362,11 +362,23 @@ draw_meshes(
       }
 
       glColorMaterial(GL_FRONT, GL_AMBIENT);
-      glColor4f(mesh[i].ambient.data[0], mesh[i].ambient.data[1], mesh[i].ambient.data[2], mesh[i].ambient.data[3]);
+      glColor4f(
+        mesh[i].ambient.data[0], 
+        mesh[i].ambient.data[1], 
+        mesh[i].ambient.data[2], 
+        mesh[i].ambient.data[3]);
       glColorMaterial(GL_FRONT, GL_DIFFUSE);
-      glColor4f(mesh[i].diffuse.data[0], mesh[i].diffuse.data[1], mesh[i].diffuse.data[2], mesh[i].diffuse.data[3]);
+      glColor4f(
+        mesh[i].diffuse.data[0], 
+        mesh[i].diffuse.data[1], 
+        mesh[i].diffuse.data[2], 
+        mesh[i].diffuse.data[3]);
       glColorMaterial(GL_FRONT, GL_SPECULAR);
-      glColor4f(mesh[i].specular.data[0], mesh[i].specular.data[1], mesh[i].specular.data[2], mesh[i].specular.data[3]);
+      glColor4f(
+        mesh[i].specular.data[0], 
+        mesh[i].specular.data[1], 
+        mesh[i].specular.data[2], 
+        mesh[i].specular.data[3]);
 
       if (texture_data[i] != 0) {
         glEnable(GL_TEXTURE_2D);
@@ -376,7 +388,11 @@ draw_meshes(
       glVertexPointer(3, GL_FLOAT, 0, &mesh[i].vertices[0]);
       glTexCoordPointer(3, GL_FLOAT, 0, &mesh[i].uv_coords[0]);
       glNormalPointer(GL_FLOAT, 0, &mesh[i].normals[0]);
-      glDrawElements(GL_TRIANGLES, (GLsizei)mesh[i].indices_count, GL_UNSIGNED_INT, &mesh[i].indices[0]);
+      glDrawElements(
+        GL_TRIANGLES, 
+        (GLsizei)mesh[i].indices_count, 
+        GL_UNSIGNED_INT, 
+        &mesh[i].indices[0]);
 
       glDisable(GL_TEXTURE_2D);
       glDisable(GL_BLEND);
