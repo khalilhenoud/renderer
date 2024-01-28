@@ -54,6 +54,21 @@ void
 update_projection(const pipeline_t* pipeline);
 
 RENDERER_API
+void
+disable_light(uint32_t index);
+
+RENDERER_API
+void
+enable_light(uint32_t index);
+
+RENDERER_API
+void
+set_light_properties(
+  uint32_t index, 
+  renderer_light_t* light, 
+  pipeline_t* pipeline);
+
+RENDERER_API
 void 
 draw_grid(
   pipeline_t* pipeline, 

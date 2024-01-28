@@ -12,6 +12,7 @@
 #define RENDERER_OPENGL_DATA_H
 
 #include <stdint.h>
+#include <math/c/vector3f.h>
 
 
 typedef
@@ -48,5 +49,29 @@ struct mesh_render_data_t {
   color_t diffuse;
   color_t specular;
 } mesh_render_data_t;
+
+typedef
+enum renderer_light_type_t {
+  RENDERER_LIGHT_TYPE_POINT,
+  RENDERER_LIGHT_TYPE_SPOT,
+  RENDERER_LIGHT_TYPE_DIRECTIONAL,
+  RENDERER_LIGHT_TYPE_COUNT
+} renderer_light_type_t;
+
+typedef
+struct renderer_light_t {
+  vector3f position;
+  vector3f direction;
+  vector3f up;
+  float inner_cone;
+  float outer_cone;
+  float attenuation_constant;
+  float attenuation_linear;
+  float attenuation_quadratic;
+  color_t diffuse;
+  color_t specular;
+  color_t ambient;
+  renderer_light_type_t type;
+} renderer_light_t;
 
 #endif
