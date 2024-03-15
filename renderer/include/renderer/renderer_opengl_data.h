@@ -45,8 +45,6 @@ struct mesh_render_data_t {
   uint32_t vertex_count;    // applies to the previous 3 arrays.
   uint32_t* indices;
   uint32_t indices_count;
-  uint32_t per_face_tex_id;
-  uint32_t* face_tex;
   color_t ambient;
   color_t diffuse;
   color_t specular;
