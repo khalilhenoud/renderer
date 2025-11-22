@@ -14,7 +14,7 @@ if(GIT_FOUND AND EXISTS "${PROJECT_SOURCE_DIR}/.git")
 	option(GIT_SUBMODULE "Check submodules during build" ON)
 	if(GIT_SUBMODULES)
 		message(STATUS "Submodule update")
-		execute_process(COMMAND $(GIT_EXECUTABLE) submodule upate --init --recursive 
+		execute_process(COMMAND $(GIT_EXECUTABLE) submodule update --init --recursive
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 		RESULT_VARIABLE GIT_SUBMOD_RESULT)
 		if(NOT GIT_SUBMOD_RESULT EQUAL "0")
@@ -39,12 +39,12 @@ add_executable(${PROJECT_NAME} WIN32
 				./source/main.cpp
         ./source/application.cpp
 				)
-			
+
 target_link_libraries(${PROJECT_NAME}
 						PRIVATE renderer
 						)
 
-target_include_directories(${PROJECT_NAME} PUBLIC 
+target_include_directories(${PROJECT_NAME} PUBLIC
 							"${PROJECT_BINARY_DIR}"
 							"${PROJECT_SOURCE_DIR}/include"
 							)
