@@ -11,10 +11,12 @@
 #ifndef WIN32_OPENGL_PARAMETERS_H
 #define WIN32_OPENGL_PARAMETERS_H
 
+#include <stdint.h>
+
 
 typedef
 struct {
-  HDC* device_context;
+  uintptr_t device_context;
 } opengl_parameters_t;
 
 #endif

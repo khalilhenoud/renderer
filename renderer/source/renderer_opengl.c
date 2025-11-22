@@ -17,7 +17,12 @@ void
 renderer_initialize()
 {
   // basic renderer setup.
-  float vec[4] = { 1.f, 1.f, 1.f, 1.f };
+  float vec[4] = { 0.0f, 0.0f, 0.0f, 1.f };
+  float col[4] = { 0.7f, 0.7f, 0.7f, 1.f };
+  float dir[4] = { 1.f, 1.f, 1.f, 0.f };
+  float col2[4] = { 0.3f, 0.3f, 0.3f, 1.f };
+  float dir2[4] = { -1.f, 1.f, -1.f, 0.f };
+  float amb[4] = { 0.3f, 0.3f, 0.3f, 1.f };
 
   glShadeModel(GL_SMOOTH);
   glEnable(GL_DEPTH_TEST);
@@ -40,6 +45,106 @@ renderer_initialize()
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_NORMAL_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+inline
+void
+set_pipeline_transform(pipeline_t* pipeline)
+{
+  matrix4f result;
+  matrix4f result_column;
+
+  if (pipeline) {
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    set_matrix_mode(pipeline, MODELVIEW);
+    result = get_matrix(pipeline);
+    matrix4f_set_column_major(&result_column, &result);
+    glMultMatrixf(result_column.data);
+  }
+}
+
+inline
+void
+clear_pipeline_transform(pipeline_t* pipeline)
+{
+  if (pipeline)
+    glPopMatrix();
+}
+
+void
+disable_depth_test()
+{
+  glDisable(GL_DEPTH_TEST);
+}
+
+void
+enable_depth_test()
+{
+  glEnable(GL_DEPTH_TEST);
+}
+
+void
+disable_light(uint32_t index)
+{
+  glDisable(GL_LIGHT0 + index);
+}
+
+void
+enable_light(uint32_t index)
+{
+  glEnable(GL_LIGHT0 + index);
+}
+
+void
+set_light_properties(
+  uint32_t index, 
+  renderer_light_t* light, 
+  pipeline_t* pipeline)
+{
+  set_pipeline_transform(pipeline);
+
+  // Fix the ambient which is undefined, also support default attenuation.
+  glLightfv(GL_LIGHT0 + index, GL_DIFFUSE, light->diffuse.data);
+  glLightfv(GL_LIGHT0 + index, GL_AMBIENT, light->ambient.data);
+  glLightfv(GL_LIGHT0 + index, GL_SPECULAR, light->specular.data);
+  glLightfv(GL_LIGHT0 + index, GL_SPOT_DIRECTION, light->direction.data);
+
+  // GL_SPOT_EXPONENT has no real equivalent in our data set.
+  if (light->type == RENDERER_LIGHT_TYPE_SPOT) {
+    float degrees_outer = TO_DEGREES(light->outer_cone);
+    glLightfv(GL_LIGHT0 + index, GL_SPOT_CUTOFF, &degrees_outer);
+  }
+
+  if (light->type != RENDERER_LIGHT_TYPE_DIRECTIONAL) {
+    vector3f atten, default_atten;
+    atten.data[0] = light->attenuation_constant;
+    atten.data[1] = light->attenuation_linear;
+    atten.data[2] = light->attenuation_quadratic;
+    default_atten.data[0] = 1.0f;
+    default_atten.data[1] = 0.0003f;
+    default_atten.data[2] = 0.0f;
+
+    if (IS_ZERO_MP(length_squared_v3f(&atten)))
+      memcpy(atten.data, default_atten.data, sizeof(atten.data));
+
+    glLightfv(GL_LIGHT0 + index, GL_CONSTANT_ATTENUATION, atten.data + 0);
+    glLightfv(GL_LIGHT0 + index, GL_LINEAR_ATTENUATION, atten.data + 1);
+    glLightfv(GL_LIGHT0 + index, GL_QUADRATIC_ATTENUATION, atten.data + 2);
+  }
+  
+  {
+    float pos[4];
+    pos[0] = light->position.data[0];
+    pos[1] = light->position.data[1];
+    pos[2] = light->position.data[2];
+    pos[3] = light->type == RENDERER_LIGHT_TYPE_DIRECTIONAL ? 0.f : 1.f;
+    glLightfv(GL_LIGHT0 + index, GL_POSITION, pos);
+  }
+
+  clear_pipeline_transform(pipeline);
 }
 
 void
@@ -81,33 +186,6 @@ update_projection(const pipeline_t* pipeline)
     glFrustum(left, right, bottom, top, near_z, far_z);
   else
     glOrtho(left, right, bottom, top, near_z, far_z);
-}
-
-inline
-void
-set_pipeline_transform(pipeline_t* pipeline)
-{
-  matrix4f result;
-  matrix4f result_column;
-
-  if (pipeline) {
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-
-    set_matrix_mode(pipeline, MODELVIEW);
-    result = get_matrix(pipeline);
-    matrix4f_set_column_major(&result_column, &result);
-    glMultMatrixf(result_column.data);
-  }
-}
-
-inline
-void
-clear_pipeline_transform(pipeline_t* pipeline)
-{
-  if (pipeline)
-    glPopMatrix();
 }
 
 void 
@@ -204,6 +282,7 @@ draw_unit_quads(
   const unit_quad_t* uvs,
   uint32_t uvs_count,
   int32_t texture_id,
+  color_t tint,
   pipeline_t* pipeline)
 {
   set_pipeline_transform(pipeline);
@@ -214,7 +293,7 @@ draw_unit_quads(
   }
 
   glDisable(GL_LIGHTING);
-  glColor4f(1.f, 1.f, 1.f, 1.f);
+  glColor4f(tint.data[0], tint.data[1], tint.data[2], tint.data[3]);
   glDisable(GL_CULL_FACE);
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_BLEND);
@@ -333,11 +412,23 @@ draw_meshes(
       }
 
       glColorMaterial(GL_FRONT, GL_AMBIENT);
-      glColor4f(mesh[i].ambient.data[0], mesh[i].ambient.data[1], mesh[i].ambient.data[2], mesh[i].ambient.data[3]);
+      glColor4f(
+        mesh[i].ambient.data[0], 
+        mesh[i].ambient.data[1], 
+        mesh[i].ambient.data[2], 
+        mesh[i].ambient.data[3]);
       glColorMaterial(GL_FRONT, GL_DIFFUSE);
-      glColor4f(mesh[i].diffuse.data[0], mesh[i].diffuse.data[1], mesh[i].diffuse.data[2], mesh[i].diffuse.data[3]);
+      glColor4f(
+        mesh[i].diffuse.data[0], 
+        mesh[i].diffuse.data[1], 
+        mesh[i].diffuse.data[2], 
+        mesh[i].diffuse.data[3]);
       glColorMaterial(GL_FRONT, GL_SPECULAR);
-      glColor4f(mesh[i].specular.data[0], mesh[i].specular.data[1], mesh[i].specular.data[2], mesh[i].specular.data[3]);
+      glColor4f(
+        mesh[i].specular.data[0], 
+        mesh[i].specular.data[1], 
+        mesh[i].specular.data[2], 
+        mesh[i].specular.data[3]);
 
       if (texture_data[i] != 0) {
         glEnable(GL_TEXTURE_2D);
@@ -347,9 +438,14 @@ draw_meshes(
       glVertexPointer(3, GL_FLOAT, 0, &mesh[i].vertices[0]);
       glTexCoordPointer(3, GL_FLOAT, 0, &mesh[i].uv_coords[0]);
       glNormalPointer(GL_FLOAT, 0, &mesh[i].normals[0]);
-      glDrawElements(GL_TRIANGLES, (GLsizei)mesh[i].indices_count, GL_UNSIGNED_INT, &mesh[i].indices[0]);
+      glDrawElements(
+        GL_TRIANGLES, 
+        (GLsizei)mesh[i].indices_count, 
+        GL_UNSIGNED_INT, 
+        &mesh[i].indices[0]);
 
       glDisable(GL_TEXTURE_2D);
+      glDisable(GL_BLEND);
     }
   }
 
@@ -358,7 +454,7 @@ draw_meshes(
 
 static
 uint32_t 
-get_component_number(image_format_t format)
+get_component_number(renderer_image_format_t format)
 {
   switch (format)
   {
@@ -385,7 +481,7 @@ get_component_number(image_format_t format)
 
 static
 int32_t 
-is_component_power_2(image_format_t format)
+is_component_power_2(renderer_image_format_t format)
 {
   uint32_t components = get_component_number(format);
   return (components & (components - 1)) == 0;
@@ -393,7 +489,7 @@ is_component_power_2(image_format_t format)
 
 static
 GLenum
-get_ogl_format(image_format_t format)
+get_ogl_format(renderer_image_format_t format)
 {
   switch (format)
   {
@@ -432,7 +528,7 @@ upload_to_gpu(
   const uint8_t* buffer,
   uint32_t width,
   uint32_t height,
-  image_format_t format)
+  renderer_image_format_t format)
 {
   uint32_t n = 0;
   GLenum ogl_format = get_ogl_format(format);

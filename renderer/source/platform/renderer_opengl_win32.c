@@ -13,7 +13,7 @@
 
 
 static 
-const HDC* device_context;      // GDI specific, HANDLE, PVOID
+HDC device_context;      // GDI specific, HANDLE, PVOID
 
 static 
 HGLRC rendering_context;        // WIN32 OpenGL specific (not a handle)
@@ -24,7 +24,7 @@ opengl_initialize(const opengl_parameters_t* params)
   int32_t iPixelFormat = 0;
   PIXELFORMATDESCRIPTOR kPFD = { 0 };
   
-  device_context = params->device_context;
+  device_context = (HDC)params->device_context;
 
   // Binding OpenGL to the current window.
   kPFD.nSize = sizeof(PIXELFORMATDESCRIPTOR);
@@ -35,17 +35,17 @@ opengl_initialize(const opengl_parameters_t* params)
   kPFD.cColorBits = 32;
   kPFD.cDepthBits = 32;
 
-  iPixelFormat = ChoosePixelFormat(*device_context, &kPFD);
-  SetPixelFormat(*device_context, iPixelFormat, &kPFD);
+  iPixelFormat = ChoosePixelFormat(device_context, &kPFD);
+  SetPixelFormat(device_context, iPixelFormat, &kPFD);
 
-  rendering_context = wglCreateContext(*device_context);
-  wglMakeCurrent(*device_context, rendering_context);
+  rendering_context = wglCreateContext(device_context);
+  wglMakeCurrent(device_context, rendering_context);
 }
 
 void 
 opengl_swapbuffer()
 {
-  SwapBuffers(*device_context);
+  SwapBuffers(device_context);
 }
 
 void 
