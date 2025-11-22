@@ -4,9 +4,9 @@
  * @brief base test for renderer.
  * @version 0.1
  * @date 2023-01-03
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 #include <windows.h>
 #include <application.h>
@@ -17,11 +17,11 @@
 HWND		g_hWnd;
 HDC			g_hWindowDC;
 
-void 
+void
 ComputeWindowPosition(
-  int32_t &x, 
-  int32_t &y, 
-  int32_t width, 
+  int32_t &x,
+  int32_t &y,
+  int32_t width,
   int32_t height,
   int32_t screen_width,
   int32_t screen_height)
@@ -34,12 +34,12 @@ ComputeWindowPosition(
 	y = (screen_height - height)/2;
 }
 
-LRESULT 
-CALLBACK 
+LRESULT
+CALLBACK
 WndProc(
-  HWND g_hWnd, 
-  UINT message, 
-  WPARAM wParam, 
+  HWND g_hWnd,
+  UINT message,
+  WPARAM wParam,
   LPARAM lParam)
 {
 	switch (message) {
@@ -53,12 +53,12 @@ WndProc(
 	return 0;
 }
 
-int 
-APIENTRY 
+int
+APIENTRY
 WinMain(
-  HINSTANCE hInstance, 
-  HINSTANCE hPrevInstance, 
-  PSTR lpCmdLine, 
+  HINSTANCE hInstance,
+  HINSTANCE hPrevInstance,
+  PSTR lpCmdLine,
   int nCmdShow)
 {
 	WNDCLASSEX wcex = { 0 };
@@ -84,14 +84,16 @@ WinMain(
   AdjustWindowRect(&r, WS_CAPTION, FALSE);
 	int32_t x, y;
 	ComputeWindowPosition(x, y, client_width, client_height, screenWidth, screenHeight);
-  g_hWnd = CreateWindow("OGL", "", WS_CAPTION, x, y, r.right - r.left, r.bottom - r.top, 0, 0, hInstance, 0);
+  g_hWnd = CreateWindow(
+    "OGL", "",
+    WS_CAPTION, x, y, r.right - r.left, r.bottom - r.top, 0, 0, hInstance, 0);
 
 	ShowWindow(g_hWnd, nCmdShow);
 	UpdateWindow(g_hWnd);
 
 	g_hWindowDC = GetDC(g_hWnd);
 
-  opengl_parameters_t params{&g_hWindowDC};
+  opengl_parameters_t params{(uintptr_t)g_hWindowDC};
   opengl_initialize(&params);
   app_initialize(client_width, client_height);
 
