@@ -1,7 +1,9 @@
 /**
  * @file renderer_opengl.h
  * @author khalilhenoud@gmail.com
- * @brief
+ * @brief you should be able to include only this file and work with opengl
+ * without relying on anything else (the platform specifics are in
+ * opengl_platform.h file)
  * @version 0.1
  * @date 2023-01-14
  *

@@ -1,7 +1,8 @@
 /**
  * @file renderer_opengl_win32.c
  * @author khalilhenoud@gmail.com
- * @brief the win32 specific part of the opengl renderer.
+ * @brief the win32 specific part of the opengl renderer, we can include
+ * opengl_platform.h here because it is part of the platform folder.
  * @version 0.1
  * @date 2023-01-13
  *
@@ -10,15 +11,6 @@
  */
 #include <stdint.h>
 #include <renderer/platform/opengl_platform.h>
-
-#if defined(WIN32) || defined(WIN64)
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <windows.h>
-#include <renderer/platform/win32/opengl_parameters.h>
-#else
-// TODO: Implement static assert for C using negative indices array.
-#endif
 
 
 static
