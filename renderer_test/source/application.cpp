@@ -1,15 +1,15 @@
 /**
  * @file application.cpp
  * @author khalilhenoud@gmail.com
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2023-01-16
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
-#include <windows.h>
 #include <math.h>
+#include <windows.h>
 #include <renderer/pipeline.h>
 #include <renderer/renderer_opengl.h>
 
@@ -93,5 +93,5 @@ app_update()
 void
 app_cleanup()
 {
-  renderer_cleanup(); 
+  renderer_cleanup();
 }
