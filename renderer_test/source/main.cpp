@@ -93,7 +93,7 @@ WinMain(
 
 	g_hWindowDC = GetDC(g_hWnd);
 
-  opengl_initialize((opengl_parameters_t)g_hWindowDC);
+  opengl_initialize((opengl_parameters_t *)&g_hWindowDC);
   app_initialize(client_width, client_height);
 
 	MSG msg;
