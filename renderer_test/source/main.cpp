@@ -1,7 +1,7 @@
 /**
  * @file main.cpp
  * @author khalilhenoud@gmail.com
- * @brief base test for renderer.
+ * @brief base test for renderer
  * @version 0.1
  * @date 2023-01-03
  *
@@ -11,7 +11,6 @@
 #include <windows.h>
 #include <application.h>
 #include <renderer/renderer_opengl.h>
-#include <renderer/platform/opengl_platform.h>
 
 
 HWND		g_hWnd;
@@ -83,7 +82,8 @@ WinMain(
 	RECT r = { 0, 0, client_width, client_height };
   AdjustWindowRect(&r, WS_CAPTION, FALSE);
 	int32_t x, y;
-	ComputeWindowPosition(x, y, client_width, client_height, screenWidth, screenHeight);
+	ComputeWindowPosition(
+    x, y, client_width, client_height, screenWidth, screenHeight);
   g_hWnd = CreateWindow(
     "OGL", "",
     WS_CAPTION, x, y, r.right - r.left, r.bottom - r.top, 0, 0, hInstance, 0);
@@ -93,8 +93,7 @@ WinMain(
 
 	g_hWindowDC = GetDC(g_hWnd);
 
-  opengl_parameters_t params{(uintptr_t)g_hWindowDC};
-  opengl_initialize(&params);
+  opengl_initialize((opengl_parameters_t)g_hWindowDC);
   app_initialize(client_width, client_height);
 
 	MSG msg;

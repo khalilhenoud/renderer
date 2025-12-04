@@ -1,12 +1,12 @@
 /**
  * @file application.h
  * @author khalilhenoud@gmail.com
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2023-01-16
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 #ifndef APPLICATION_H
 #define APPLICATION_H

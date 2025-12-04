@@ -1,12 +1,12 @@
 /**
  * @file pipeline.h
  * @author khalilhenoud@gmail.com
- * @brief provides transformation stack for the rendering pipeline.
+ * @brief provides transformation stack for the rendering pipeline
  * @version 0.1
  * @date 2023-01-13
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 #ifndef PIPELINE_H
 #define PIPELINE_H
@@ -15,10 +15,10 @@
 extern "C" {
 #endif
 
-#include <string.h>
-#include <stdio.h>
 #include <assert.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <string.h>
 #include <math/c/matrix4f.h>
 
 
@@ -58,7 +58,7 @@ enum {
   VIEWPORT_COUNT
 } viewport_t;
 
-typedef 
+typedef
 struct pipeline_t {
   stack_mode_t mode;
   matrix4f modelview_stack[MODELVIEW_STACK];
@@ -68,7 +68,7 @@ struct pipeline_t {
   projection_mode_t projection_mode;
   float frustum[FRUSTUM_COUNT];
   float viewport[VIEWPORT_COUNT];
-  
+
   // internal use.
   matrix4f* current_stack;
   int32_t* current_index;
@@ -77,8 +77,8 @@ struct pipeline_t {
 
 
 ////////////////////////////////////////////////////////////////////////////////
-inline 
-void 
+inline
+void
 set_matrix_mode(pipeline_t*, stack_mode_t);
 
 inline
@@ -107,10 +107,10 @@ get_projection_type(const pipeline_t* pipeline)
 inline
 void
 get_viewport_info(
-  const pipeline_t* pipeline, 
-  float* x, 
-  float*y, 
-  float* width, 
+  const pipeline_t* pipeline,
+  float* x,
+  float*y,
+  float* width,
   float* height)
 {
   *x = pipeline->viewport[X];
@@ -122,10 +122,10 @@ get_viewport_info(
 inline
 void
 set_viewport(
-  pipeline_t* dst, 
-  float x, 
-  float y, 
-  float width, 
+  pipeline_t* dst,
+  float x,
+  float y,
+  float width,
   float height)
 {
   dst->viewport[X] = x;
@@ -145,12 +145,12 @@ set_viewport(
 inline
 void
 set_perspective(
-  pipeline_t* dst, 
-  float left, 
-  float right, 
-  float bottom, 
-  float top, 
-  float near_z, 
+  pipeline_t* dst,
+  float left,
+  float right,
+  float bottom,
+  float top,
+  float near_z,
   float far_z)
 {
   dst->projection_mode  = PERSPECTIVE;
@@ -166,12 +166,12 @@ set_perspective(
 inline
 void
 set_orthographic(
-  pipeline_t* dst, 
-  float left, 
-  float right, 
-  float bottom, 
-  float top, 
-  float near_z, 
+  pipeline_t* dst,
+  float left,
+  float right,
+  float bottom,
+  float top,
+  float near_z,
   float far_z)
 {
   dst->projection_mode  = ORTHOGRAPHIC;
@@ -187,12 +187,12 @@ set_orthographic(
 inline
 void
 get_frustum(
-  const pipeline_t* pipeline, 
-  float* left, 
-  float* right, 
-  float* bottom, 
-  float* top, 
-  float* near_z, 
+  const pipeline_t* pipeline,
+  float* left,
+  float* right,
+  float* bottom,
+  float* top,
+  float* near_z,
   float* far_z)
 {
   *left    = pipeline->frustum[LEFT];
@@ -204,7 +204,7 @@ get_frustum(
 }
 
 /// @brief sets the current stack mode of the pipeline, along with a few helper
-/// variables. 
+/// variables.
 inline
 void
 set_matrix_mode(pipeline_t* dst, stack_mode_t mode)
@@ -221,7 +221,7 @@ set_matrix_mode(pipeline_t* dst, stack_mode_t mode)
   }
 }
 
-/// @brief returns the current top of the stack matrix. 
+/// @brief returns the current top of the stack matrix.
 inline
 matrix4f
 get_matrix(const pipeline_t* pipeline)
@@ -231,17 +231,18 @@ get_matrix(const pipeline_t* pipeline)
 
 /// @brief dupliate the matrix at the top of the stack and push it on top. this
 /// effectively makes the matrix at the top of the stack identical to the one
-/// just below it. this is useful for throwaway transformation cases. 
+/// just below it. this is useful for throwaway transformation cases.
 inline
 void
 push_matrix(pipeline_t* dst)
 {
   assert((*dst->current_index + 1) < dst->current_max_index);
-  dst->current_stack[*dst->current_index + 1] = dst->current_stack[*dst->current_index];
+  dst->current_stack[*dst->current_index + 1] =
+    dst->current_stack[*dst->current_index];
   ++*dst->current_index;
 }
 
-/// @brief removes and returns the top matrix. 
+/// @brief removes and returns the top matrix.
 inline
 matrix4f
 pop_matrix(pipeline_t* dst)
@@ -250,7 +251,7 @@ pop_matrix(pipeline_t* dst)
   return dst->current_stack[(*dst->current_index)--];
 }
 
-/// @brief loads the identity matrix at the top of the stack. 
+/// @brief loads the identity matrix at the top of the stack.
 inline
 void
 load_identity(pipeline_t* dst)
@@ -258,7 +259,7 @@ load_identity(pipeline_t* dst)
   matrix4f_set_identity(&dst->current_stack[*dst->current_index]);
 }
 
-/// @brief replaces the top matrix with src. 
+/// @brief replaces the top matrix with src.
 inline
 void
 replace(pipeline_t* dst, const matrix4f* src)
@@ -378,7 +379,6 @@ pre_scale(pipeline_t* dst, float x, float y, float z)
   matrix4f_scale(&result, x, y, z);
   pre_multiply(dst, &result);
 }
-
 
 #ifdef __cplusplus
 }

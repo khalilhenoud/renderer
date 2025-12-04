@@ -1,16 +1,15 @@
 /**
  * @file renderer_opengl.c
  * @author khalilhenoud@gmail.com
- * @brief 
+ * @brief
  * @version 0.1
  * @date 2023-01-14
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 #include <assert.h>
 #include <renderer/renderer_opengl.h>
-#include <renderer/platform/opengl_platform.h>
 
 
 void
@@ -100,8 +99,8 @@ enable_light(uint32_t index)
 
 void
 set_light_properties(
-  uint32_t index, 
-  renderer_light_t* light, 
+  uint32_t index,
+  renderer_light_t* light,
   pipeline_t* pipeline)
 {
   set_pipeline_transform(pipeline);
@@ -134,7 +133,7 @@ set_light_properties(
     glLightfv(GL_LIGHT0 + index, GL_LINEAR_ATTENUATION, atten.data + 1);
     glLightfv(GL_LIGHT0 + index, GL_QUADRATIC_ATTENUATION, atten.data + 2);
   }
-  
+
   {
     float pos[4];
     pos[0] = light->position.data[0];
@@ -165,7 +164,7 @@ flush_operations()
   glFinish();
 }
 
-void 
+void
 update_viewport(const pipeline_t* pipeline)
 {
   float x, y, width, height;
@@ -174,7 +173,7 @@ update_viewport(const pipeline_t* pipeline)
   glViewport((GLint)x, (GLint)y, (GLsizei)width, (GLsizei)height);
 }
 
-void 
+void
 update_projection(const pipeline_t* pipeline)
 {
   float left, right, bottom, top, near_z, far_z;
@@ -188,7 +187,7 @@ update_projection(const pipeline_t* pipeline)
     glOrtho(left, right, bottom, top, near_z, far_z);
 }
 
-void 
+void
 draw_grid(
   pipeline_t* pipeline,
   float width,
@@ -199,7 +198,7 @@ draw_grid(
   glDisable(GL_LIGHTING);
   glColor4f(0, 0, 0, 1);
   glBegin(GL_LINES);
-  
+
   for (int32_t i = 0; i <= lines_per_axis; ++i) {
     glVertex3f(-width / 2, 0, -width / 2 + width / lines_per_axis * i);
     glVertex3f(width / 2, 0, -width / 2 + width / lines_per_axis * i);
@@ -207,7 +206,7 @@ draw_grid(
     glVertex3f(-width / 2 + width / lines_per_axis * i, 0, -width / 2);
     glVertex3f(-width / 2 + width / lines_per_axis * i, 0, width / 2);
   }
-  
+
   glEnd();
   glEnable(GL_LIGHTING);
 
@@ -223,7 +222,7 @@ draw_points(
   pipeline_t* pipeline)
 {
   set_pipeline_transform(pipeline);
-  
+
   glDisable(GL_LIGHTING);
   glColor4f(color.data[0], color.data[1], color.data[2], color.data[3]);
   glPointSize(size);
@@ -340,7 +339,7 @@ draw_unit_quads(
       glDrawElements(GL_TRIANGLES, (GLsizei)6, GL_UNSIGNED_INT, &ogl_idx[0]);
     }
   }
-  
+
   glDisable(GL_BLEND);
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
@@ -390,7 +389,7 @@ draw_meshes_wireframe(
   clear_pipeline_transform(pipeline);
 }
 
-void 
+void
 draw_meshes(
   const mesh_render_data_t* mesh,
   const uint32_t* texture_data,
@@ -413,21 +412,21 @@ draw_meshes(
 
       glColorMaterial(GL_FRONT, GL_AMBIENT);
       glColor4f(
-        mesh[i].ambient.data[0], 
-        mesh[i].ambient.data[1], 
-        mesh[i].ambient.data[2], 
+        mesh[i].ambient.data[0],
+        mesh[i].ambient.data[1],
+        mesh[i].ambient.data[2],
         mesh[i].ambient.data[3]);
       glColorMaterial(GL_FRONT, GL_DIFFUSE);
       glColor4f(
-        mesh[i].diffuse.data[0], 
-        mesh[i].diffuse.data[1], 
-        mesh[i].diffuse.data[2], 
+        mesh[i].diffuse.data[0],
+        mesh[i].diffuse.data[1],
+        mesh[i].diffuse.data[2],
         mesh[i].diffuse.data[3]);
       glColorMaterial(GL_FRONT, GL_SPECULAR);
       glColor4f(
-        mesh[i].specular.data[0], 
-        mesh[i].specular.data[1], 
-        mesh[i].specular.data[2], 
+        mesh[i].specular.data[0],
+        mesh[i].specular.data[1],
+        mesh[i].specular.data[2],
         mesh[i].specular.data[3]);
 
       if (texture_data[i] != 0) {
@@ -439,9 +438,9 @@ draw_meshes(
       glTexCoordPointer(3, GL_FLOAT, 0, &mesh[i].uv_coords[0]);
       glNormalPointer(GL_FLOAT, 0, &mesh[i].normals[0]);
       glDrawElements(
-        GL_TRIANGLES, 
-        (GLsizei)mesh[i].indices_count, 
-        GL_UNSIGNED_INT, 
+        GL_TRIANGLES,
+        (GLsizei)mesh[i].indices_count,
+        GL_UNSIGNED_INT,
         &mesh[i].indices[0]);
 
       glDisable(GL_TEXTURE_2D);
@@ -453,7 +452,7 @@ draw_meshes(
 }
 
 static
-uint32_t 
+uint32_t
 get_component_number(renderer_image_format_t format)
 {
   switch (format)
@@ -480,7 +479,7 @@ get_component_number(renderer_image_format_t format)
 }
 
 static
-int32_t 
+int32_t
 is_component_power_2(renderer_image_format_t format)
 {
   uint32_t components = get_component_number(format);
@@ -522,7 +521,7 @@ get_ogl_format(renderer_image_format_t format)
   return GL_RGBA;
 }
 
-uint32_t 
+uint32_t
 upload_to_gpu(
   const char* path,
   const uint8_t* buffer,
@@ -537,15 +536,15 @@ upload_to_gpu(
   glGenTextures(1, &n);
   glBindTexture(GL_TEXTURE_2D, n);
   glPixelStorei(
-    GL_UNPACK_ALIGNMENT, 
+    GL_UNPACK_ALIGNMENT,
     is_component_power_2(format) ? get_component_number(format) : 1);
   gluBuild2DMipmaps(
-    GL_TEXTURE_2D, 
-    get_component_number(format), 
-    width, 
-    height, 
-    ogl_format, 
-    GL_UNSIGNED_BYTE, 
+    GL_TEXTURE_2D,
+    get_component_number(format),
+    width,
+    height,
+    ogl_format,
+    GL_UNSIGNED_BYTE,
     buffer);
   glTexParameteri(
     GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
