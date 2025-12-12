@@ -21,7 +21,7 @@ extern "C" {
 #include <renderer/internal/module.h>
 #include <renderer/pipeline.h>
 #include <renderer/platform/opengl_platform.h>
-#include <math/c/vector3f.h>
+#include <math/vector3f.h>
 
 
 typedef

@@ -19,7 +19,7 @@ extern "C" {
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include <math/c/matrix4f.h>
+#include <math/matrix4f.h>
 
 
 // TODO: implement a texture stack.
