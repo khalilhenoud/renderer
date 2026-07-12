@@ -291,6 +291,7 @@ draw_unit_quads(
     glBindTexture(GL_TEXTURE_2D, texture_id);
   }
 
+  glDisableClientState(GL_NORMAL_ARRAY);
   glDisable(GL_LIGHTING);
   glColor4f(tint.data[0], tint.data[1], tint.data[2], tint.data[3]);
   glDisable(GL_CULL_FACE);
@@ -344,6 +345,7 @@ draw_unit_quads(
   glEnable(GL_DEPTH_TEST);
   glEnable(GL_CULL_FACE);
   glEnable(GL_LIGHTING);
+  glEnableClientState(GL_NORMAL_ARRAY);
   glDisable(GL_TEXTURE_2D);
 
   clear_pipeline_transform(pipeline);
